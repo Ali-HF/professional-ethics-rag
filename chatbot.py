@@ -19,9 +19,9 @@ CHROMA_PATH = r"chroma_db"
 # Initialize local embedding model matching ingest_database.py
 embeddings_model = FastEmbedEmbeddings(model_name="BAAI/bge-small-en-v1.5")
 
-# Initialize Groq LLM (Llama 3.3 70B - fast, accurate, free tier)
+# Initialize Groq LLM (high-speed, highly capable reasoning model)
 llm = ChatGroq(
-    model_name="llama-3.3-70b-versatile",
+    model_name="qwen/qwen3.8-27b",
     temperature=0.3,
     streaming=True
 )
