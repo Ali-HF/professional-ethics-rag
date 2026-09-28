@@ -161,11 +161,36 @@ This document tracks the chronological sequence of problems encountered, diagnos
 
 ---
 
+### Step 9: Design Evolution to 21st.dev & Framer Motion
+- **User Request**: Clean up the UI from being too graphic-heavy and dense; shift to a simplistic, modern aesthetic inspired by **21st.dev** and integrate **Framer Motion**.
+- **Problems with Previous Layout**:
+  - Bulky stock-style illustration headers on every card added visual noise without contributing to studying.
+  - Excessive badges, countdown tickers, and multi-tier toolbars cluttered the student's focus.
+  - Page felt information-heavy rather than intuitive.
+- **Architectural & Aesthetic Shift**:
+  1. **Visual Language (21st.dev / Linear style)**:
+     - Shifted from warm cream graph-paper to an ultra-modern dark obsidian backdrop (`#09090b`), subtle ambient radial glow, and refined micro-borders (`rgba(255, 255, 255, 0.08)`).
+     - Clean typography using `Geist` and `Geist Mono`.
+  2. **Interaction Design (Spotlight Command Bar)**:
+     - Replaced cluttered search rows with a centralized spotlight command bar featuring keyboard shortcuts (`Enter ↵`, `Ctrl + K` focus).
+     - Added popular prompt chips directly below the search bar for instant study queries.
+  3. **Bento Grid Architecture**:
+     - Stripped away bloated images in favor of clean, information-dense Bento cards with week indicators, slide counts, key topic tags, and direct `Study Guide` / `⚡ Quiz Me` action triggers.
+  4. **Framer Motion Integration**:
+     - Embedded the standalone `Motion` browser bundle (`motion@11.11.17`).
+     - Implemented staggered spring entrance animations (`stagger(0.08)`, spring stiffness 220) for hero elements and cards on initial load and category filtering.
+     - Smooth spring drawer transitions and tactile button micro-interactions.
+
+---
+
 ## 📌 Summary of Core Decisions
 
 | Decision | Selected Choice | Rejected Alternative | Primary Reason |
 |---|---|---|---|
+| **UI Paradigm** | 21st.dev Minimalist Bento + Spotlight | Graphic-heavy Banao cards | Distraction-free, modern developer aesthetic, faster scanning. |
+| **Animation Engine** | Framer Motion (`window.Motion`) | CSS keyframe animations | Natural spring physics, staggered list rendering, smooth layout transitions. |
 | **Embedding Engine** | FastEmbed (`bge-small-en-v1.5`) | OpenAI Embeddings | Zero cost, runs 100% locally on CPU, no paid API key required. |
 | **Inference LLM** | Groq (`qwen/qwen3.8-27b`) | OpenAI `gpt-4o-mini` | Blazing fast inference (~2s response), free API access, available on user's key. |
 | **Backend Framework** | FastAPI + Uvicorn | Pure Gradio | Full control over custom editorial HTML/CSS design, SSE token streaming, and API key management. |
 | **Student UX** | `start.bat` & Web Key Modal | Manual terminal commands | Enables non-technical classmates to run the RAG system by double-clicking a single file. |
+

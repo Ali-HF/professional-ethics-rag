@@ -1,195 +1,176 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ethica · Professional Ethics Midterm Prep (CT-268)</title>
+  <title>Ethica · Professional Ethics Midterm Assistant (CT-268)</title>
   
-  <!-- Modern Typography from Google Fonts -->
+  <!-- Modern Inter & JetBrains Mono Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Framer Motion Standalone Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/motion@11.11.17/dist/motion.js"></script>
   
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 
-  <!-- Top Navigation -->
-  <nav class="top-nav">
-    <div class="nav-container">
+  <!-- Background Glow & Grid (21st.dev signature backdrop) -->
+  <div class="bg-gradient-glow"></div>
+  <div class="bg-dots-pattern"></div>
+
+  <!-- Minimalist Navbar -->
+  <nav class="nav-bar">
+    <div class="nav-inner">
       <div class="brand">
-        <span class="brand-text">Ethica<span class="brand-dot">.</span></span>
-        <span class="brand-badge">CT-268</span>
+        <div class="brand-logo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+        </div>
+        <span class="brand-name">Ethica</span>
+        <span class="brand-tag">CT-268</span>
       </div>
-      <div class="nav-actions">
-        <button id="navKeyBtn" class="nav-pill-btn">
-          <span id="keyStatusDot" class="status-pulse" style="width: 6px; height: 6px; margin-right: 4px;"></span>
-          API Key
+
+      <div class="nav-links">
+        <button id="navKeyBtn" class="nav-btn">
+          <span id="keyStatusDot" class="status-dot"></span>
+          <span>API Key</span>
         </button>
-        <a href="https://github.com/Ali-HF/professional-ethics-rag" target="_blank" class="nav-pill-btn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-          GitHub Repo
+        <a href="https://github.com/Ali-HF/professional-ethics-rag" target="_blank" class="nav-btn github">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+          <span>GitHub</span>
         </a>
       </div>
     </div>
   </nav>
 
-  <!-- Hero Header Section -->
-  <header class="hero-section">
-    <div class="hero-container">
-      <div class="hero-content">
-        <div class="eyebrow-badge">
-          <span class="square-icon">■</span> CT-268 · PROFESSIONAL ETHICS MIDTERM PREP
-        </div>
-        <h1 class="hero-title">Master your Ethics.</h1>
-        <p class="hero-subtext">
-          All 6 course modules by <strong>Lecturer Huma Tabassum</strong> (Dept. of CS & IT, NED University) are indexed with local neural embeddings. Explore weeks, test ethical dilemmas, or generate midterm exam questions.
-        </p>
+  <!-- Hero Section -->
+  <main class="main-content">
+    <header class="hero">
+      <div class="hero-badge animate-in">
+        <span class="badge-dot"></span>
+        <span>146 Lecture Slides Indexed · NED University</span>
+      </div>
 
-        <div class="hero-cta-group">
-          <button id="heroOpenChatBtn" class="btn-primary-dark">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-            Ask the AI Study Assistant
+      <h1 class="hero-heading animate-in">
+        Study ethics with <span class="gradient-text">precision</span>.
+      </h1>
+
+      <p class="hero-sub animate-in">
+        Interactive RAG study tutor for CT-268 Professional Ethics (Lecturer Huma Tabassum). Ask questions, verify page citations, and practice midterm exam scenarios.
+      </p>
+
+      <!-- 21st.dev Style Spotlight Command Bar -->
+      <div class="search-command-bar animate-in">
+        <div class="command-input-container">
+          <svg class="command-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="mainQuestionInput" placeholder="Ask any question, compare theories, or request practice exam MCQs..." />
+          <button id="mainSubmitBtn" class="command-action-btn" title="Send question">
+            <span>Ask</span>
+            <kbd class="kbd-shortcut">↵</kbd>
           </button>
-          <span class="cta-helper-text">146 lecture slides indexed · Groq Qwen 27B accelerated</span>
+        </div>
+
+        <!-- Quick Prompt Chips -->
+        <div class="prompt-chips">
+          <span class="chips-label">Popular:</span>
+          <button class="chip-btn" data-query="Generate 5 multiple-choice midterm exam questions with explanations from our course slides.">5 Practice MCQs</button>
+          <button class="chip-btn" data-query="Compare Utilitarianism, Kantian Duty Ethics, and Aristotle's Virtue Ethics based on our slides.">Compare 3 Theories</button>
+          <button class="chip-btn" data-query="Walk me through the Line Drawing method from Week 6 with a step-by-step example.">Line Drawing Method</button>
+          <button class="chip-btn" data-query="Explain the ethical failures in the Challenger and Therac-25 case studies from Week 2.">Safety Case Studies</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Filter & Module Cards Grid -->
+    <section class="modules-section">
+      <div class="modules-header animate-in">
+        <div class="section-title-wrap">
+          <h2 class="section-title">Course Modules</h2>
+          <span class="section-desc">6 Weeks · 199 Knowledge Chunks</span>
+        </div>
+
+        <div class="filter-pills" id="filterPillsContainer">
+          <button class="pill active" data-filter="all">All</button>
+          <button class="pill" data-filter="week-1">W1</button>
+          <button class="pill" data-filter="week-2">W2</button>
+          <button class="pill" data-filter="week-3">W3</button>
+          <button class="pill" data-filter="week-4">W4</button>
+          <button class="pill" data-filter="week-5">W5</button>
+          <button class="pill" data-filter="week-6">W6</button>
         </div>
       </div>
 
-      <!-- Right Countdown & Status Card (Matches Screenshot) -->
-      <div class="countdown-card">
-        <div class="countdown-badge-label">Midterm prep mode</div>
-        <div class="countdown-timer" id="countdownClock">24:00:00</div>
-        <div class="countdown-date">6 Weeks · 199 Chunks Indexed</div>
-        <div class="countdown-status">
-          <span class="status-pulse"></span>
-          Vector RAG Knowledge: Online
-        </div>
+      <!-- Bento-style Minimalist Module Grid -->
+      <div class="modules-bento-grid" id="modulesGrid">
+        <!-- Rendered dynamically by app.js -->
       </div>
-    </div>
-  </header>
-
-  <!-- Filter & Search Toolbar (Matches Screenshot) -->
-  <section class="toolbar-section">
-    <div class="toolbar-container">
-      <div class="search-row">
-        <div class="search-input-wrapper">
-          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <input type="text" id="searchInput" placeholder="Search concepts, theories, cases, Kohlberg, Utilitarianism, Line Drawing..." />
-        </div>
-
-        <div class="dropdown-wrapper">
-          <select id="domainSelect">
-            <option value="all">All domains</option>
-            <option value="Foundations">Foundations & Values</option>
-            <option value="Risk & Safety">Risk, Safety & Responsibility</option>
-            <option value="Dilemmas">Moral Reasoning & Dilemmas</option>
-            <option value="Theories I">Utilitarianism & Duty Ethics</option>
-            <option value="Theories II">Virtue Ethics & Self Realization</option>
-            <option value="Problem-Solving">Problem-Solving & Line Drawing</option>
-          </select>
-        </div>
-
-        <div class="view-toggle">
-          <button class="toggle-btn active" id="viewGridBtn">Grid</button>
-          <button class="toggle-btn" id="viewListBtn">List</button>
-        </div>
-      </div>
-
-      <!-- Filter Pills -->
-      <div class="filter-pills-row">
-        <button class="filter-pill active" data-filter="all">All weeks</button>
-        <button class="filter-pill" data-filter="week-1">Week 1</button>
-        <button class="filter-pill" data-filter="week-2">Week 2</button>
-        <button class="filter-pill" data-filter="week-3">Week 3</button>
-        <button class="filter-pill" data-filter="week-4">Week 4</button>
-        <button class="filter-pill" data-filter="week-5">Week 5</button>
-        <button class="filter-pill" data-filter="week-6">Week 6</button>
-      </div>
-
-      <div class="results-count" id="resultsCount">6 modules, ready for midterm study</div>
-    </div>
-  </section>
-
-  <!-- Modules Grid -->
-  <main class="modules-section">
-    <div class="modules-container" id="modulesGrid">
-      <!-- Populated dynamically by app.js -->
-    </div>
+    </section>
   </main>
 
-  <!-- Sticky Bottom Bar (Matches Screenshot) -->
-  <aside class="sticky-bottom-bar">
-    <div class="sticky-container">
-      <div class="sticky-text">
-        <em>Ready to test your knowledge on actual midterm exam questions?</em>
+  <!-- Sleek 21st.dev Focused Chat Drawer -->
+  <div class="chat-overlay" id="chatOverlay"></div>
+  <aside class="study-drawer" id="studyDrawer">
+    <div class="drawer-header">
+      <div class="drawer-title-box">
+        <div class="drawer-indicator">
+          <span class="live-dot"></span>
+          <span>GROQ QWEN 27B · CHROMADB RAG</span>
+        </div>
+        <h3 class="drawer-heading" id="drawerTitle">Study Assistant</h3>
       </div>
-      <button id="stickyQuizBtn" class="btn-sticky-action">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-        Generate Midterm Quiz
+      <button class="drawer-close" id="drawerCloseBtn" title="Close drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
     </div>
-  </aside>
 
-  <!-- Sliding AI Chat & Quiz Drawer -->
-  <div class="drawer-overlay" id="drawerOverlay"></div>
-  <aside class="chat-drawer" id="chatDrawer">
-    <div class="drawer-header">
-      <div class="drawer-title-group">
-        <div class="drawer-eyebrow">NEURAL RAG ASSISTANT</div>
-        <h3 class="drawer-title" id="drawerTitle">Professional Ethics Study Tutor</h3>
-      </div>
-      <button class="drawer-close-btn" id="drawerCloseBtn">&times;</button>
-    </div>
-
-    <!-- Suggested Quick Prompts -->
-    <div class="quick-prompts-bar">
-      <span class="quick-label">Exam Prompts:</span>
-      <button class="quick-chip" data-query="Generate 5 multiple-choice midterm exam questions with explanations from our course slides.">5 Practice MCQs</button>
-      <button class="quick-chip" data-query="Compare Utilitarianism, Kantian Duty Ethics, and Virtue Ethics using examples from our slides.">Compare 3 Theories</button>
-      <button class="quick-chip" data-query="Explain the Line Drawing method from Week 6 with a step-by-step example.">Line Drawing Guide</button>
-      <button class="quick-chip" data-query="What were the ethical failures in the Challenger and Therac-25 case studies from Week 2?">Case Studies</button>
-    </div>
-
-    <!-- Chat Messages Scroll Container -->
-    <div class="chat-messages" id="chatMessages">
-      <div class="chat-bubble assistant">
-        <div class="bubble-avatar">⚖️</div>
-        <div class="bubble-body">
-          <p>Hello! I am your <strong>CT-268 Professional Ethics</strong> midterm prep tutor.</p>
-          <p>I have ingested all 146 lecture slides by Lecturer Huma Tabassum. Ask me to explain any theory, generate practice exam questions, or walk through a case study!</p>
+    <!-- Chat Messages Stream -->
+    <div class="drawer-messages" id="drawerMessages">
+      <div class="message-bubble assistant">
+        <div class="bubble-header">
+          <span class="avatar-badge">⚖️</span>
+          <span class="sender-name">Ethica Tutor</span>
+        </div>
+        <div class="bubble-text">
+          <p>Ready to help you ace your <strong>CT-268 Professional Ethics</strong> midterm exam. Ask me anything about the theories, engineering safety, dilemma frameworks, or ask for practice questions!</p>
         </div>
       </div>
     </div>
 
-    <!-- Chat Input Form -->
-    <form class="chat-input-form" id="chatForm">
-      <div class="chat-input-box">
-        <textarea id="chatInput" rows="1" placeholder="Ask about any ethical theory, dilemma, or request exam questions..."></textarea>
-        <button type="submit" id="sendBtn" class="send-btn" title="Send message">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-        </button>
-      </div>
-    </form>
+    <!-- Drawer Input Bar -->
+    <div class="drawer-input-area">
+      <form id="drawerChatForm" class="drawer-form">
+        <div class="drawer-input-wrapper">
+          <textarea id="drawerInput" rows="1" placeholder="Ask a follow-up question or request a quiz..."></textarea>
+          <button type="submit" id="drawerSendBtn" class="drawer-send-btn" title="Send message">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          </button>
+        </div>
+      </form>
+    </div>
   </aside>
 
-  <!-- Groq API Key Setup Modal -->
-  <div class="modal-overlay" id="keyModalOverlay">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="eyebrow-badge">FREE SETUP</div>
-        <h3 class="modal-title">Configure Groq API Key</h3>
-        <p class="modal-subtext">Groq provides free, ultra-fast LLM inference. Get a key in 30 seconds at <a href="https://console.groq.com/keys" target="_blank" style="color: var(--color-gold); font-weight: 600;">console.groq.com/keys</a>.</p>
+  <!-- Sleek API Key Modal -->
+  <div class="key-modal-overlay" id="keyModalOverlay">
+    <div class="key-modal">
+      <div class="modal-top">
+        <div class="modal-badge">CONFIGURATION</div>
+        <h3 class="modal-heading">Groq API Key</h3>
+        <p class="modal-sub">
+          Groq provides 100% free, high-speed LLM inference. Grab your key in 20 seconds at <a href="https://console.groq.com/keys" target="_blank" class="accent-link">console.groq.com/keys</a>.
+        </p>
       </div>
 
-      <div class="modal-body">
-        <label for="modalApiKeyInput" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--text-dim); display: block; margin-bottom: 6px;">Groq API Key</label>
-        <input type="password" id="modalApiKeyInput" placeholder="gsk_..." style="width: 100%; padding: 12px 14px; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.9rem; outline: none; margin-bottom: 12px;" />
-        <div id="modalKeyMsg" style="font-size: 0.82rem; margin-bottom: 12px; display: none;"></div>
+      <div class="modal-input-group">
+        <label for="modalApiKeyInput">Key (starts with <code>gsk_</code>)</label>
+        <input type="password" id="modalApiKeyInput" placeholder="gsk_..." spellcheck="false" />
+        <div id="modalKeyMsg" class="modal-msg"></div>
       </div>
 
-      <div class="modal-footer" style="display: flex; gap: 10px; justify-content: flex-end;">
-        <button id="modalCloseBtn" class="nav-pill-btn" style="border: 1px solid var(--border-subtle);">Cancel</button>
-        <button id="modalSaveKeyBtn" class="btn-primary-dark" style="padding: 10px 20px; font-size: 0.85rem;">Save & Activate Key</button>
+      <div class="modal-actions">
+        <button id="modalCloseBtn" class="btn-ghost">Cancel</button>
+        <button id="modalSaveKeyBtn" class="btn-solid">Save & Activate</button>
       </div>
     </div>
   </div>
