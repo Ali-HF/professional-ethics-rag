@@ -104,10 +104,10 @@ Open your browser and navigate to:
 ```text
 ├── data/                   # Course PDFs (Week 1 to Week 6)
 ├── chroma_db/              # Local Chroma vector database (created upon ingestion)
-├── static/                 # Frontend assets (Banao-inspired editorial design)
+├── static/                 # Frontend assets (Claude-inspired study interface)
 │   ├── index.html          # Main web application layout
-│   ├── style.css           # Design tokens, grid background, serif typography
-│   ├── app.js              # Live search, filters, countdown, and SSE streaming
+│   ├── style.css           # Design tokens, Claude theme, typography
+│   ├── app.js              # Sidebar module navigator & SSE streaming
 │   └── images/             # Module artwork & hero graphics
 ├── .env.example            # Environment variables template
 ├── ingest_database.py      # PDF loader, text splitter, and vector ingestion script
@@ -136,5 +136,10 @@ Here are useful prompts you can test in the study drawer:
 
 ---
 
+## 👨‍💻 Author
+Built by **Ali Hasan** ([@Ali-HF](https://github.com/Ali-HF)) for CT-268 Professional Ethics exam preparation at NED University of Engineering & Technology.
+
+---
+
 ## 📄 License
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

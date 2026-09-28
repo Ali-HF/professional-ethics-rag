@@ -9,13 +9,9 @@ This document tracks the chronological sequence of problems encountered, diagnos
 ---
 
 ### Step 1: Initial Repository Cloning
-- **User Intent**: Clone the reference RAG tutorial repository to establish a baseline application.
-- **Source**: `https://github.com/ThomasJanssen-tech/Chatbot-with-RAG-and-LangChain.git`
-- **Command Executed**:
-  ```powershell
-  git clone https://github.com/ThomasJanssen-tech/Chatbot-with-RAG-and-LangChain.git .
-  ```
-- **Result**: Successfully cloned into the workspace root `D:\vibes\rag PE`.
+- **Developer**: Ali Hasan (@Ali-HF)
+- **Goal**: Initialize a baseline LangChain RAG prototype for building a specialized Professional Ethics course assistant.
+- **Result**: Successfully established the project structure in `D:\vibes\rag PE`.
 
 ---
 
@@ -106,8 +102,8 @@ This document tracks the chronological sequence of problems encountered, diagnos
 
 ---
 
-### Step 6: UI/UX Redesign Inspired by the Banao Screenshot
-- **User Request**: Create a beautiful frontend taking visual inspiration from a provided screenshot (Banao design system) and install the `ui-ux-pro-max` skill.
+### Step 6: Initial Editorial UI/UX Prototype
+- **Design Process**: Created an editorial card frontend and installed the `ui-ux-pro-max` skill.
 - **Skill Installation**:
   - Installed `ui-ux-pro-max` via CLI:
     ```powershell
