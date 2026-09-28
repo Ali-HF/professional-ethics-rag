@@ -1,21 +1,24 @@
 // State
 let allModules = [];
-let currentFilter = 'all';
+let activeModuleFilter = 'all';
 let chatHistory = [];
 let isStreaming = false;
 
 // DOM Elements
-const modulesGrid = document.getElementById('modulesGrid');
-const filterPillsContainer = document.getElementById('filterPillsContainer');
-const mainQuestionInput = document.getElementById('mainQuestionInput');
-const mainSubmitBtn = document.getElementById('mainSubmitBtn');
+const sidebar = document.getElementById('sidebar');
+const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+const mobileSidebarBtn = document.getElementById('mobileSidebarBtn');
+const modulesList = document.getElementById('modulesList');
+const newChatBtn = document.getElementById('newChatBtn');
 
-const studyDrawer = document.getElementById('studyDrawer');
-const chatOverlay = document.getElementById('chatOverlay');
-const drawerCloseBtn = document.getElementById('drawerCloseBtn');
-const drawerChatForm = document.getElementById('drawerChatForm');
-const drawerInput = document.getElementById('drawerInput');
-const drawerMessages = document.getElementById('drawerMessages');
+const activeScopeLabel = document.getElementById('activeScopeLabel');
+const welcomeView = document.getElementById('welcomeView');
+const chatThread = document.getElementById('chatThread');
+const messagesContainer = document.getElementById('messagesContainer');
+
+const chatForm = document.getElementById('chatForm');
+const messageInput = document.getElementById('messageInput');
+const sendBtn = document.getElementById('sendBtn');
 
 // Key Modal Elements
 const navKeyBtn = document.getElementById('navKeyBtn');
@@ -24,6 +27,7 @@ const keyModalOverlay = document.getElementById('keyModalOverlay');
 const modalApiKeyInput = document.getElementById('modalApiKeyInput');
 const modalSaveKeyBtn = document.getElementById('modalSaveKeyBtn');
 const modalCloseBtn = document.getElementById('modalCloseBtn');
+const modalCancelBtn = document.getElementById('modalCancelBtn');
 const modalKeyMsg = document.getElementById('modalKeyMsg');
 
 // Initialize
@@ -31,171 +35,122 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchModules();
   setupEventListeners();
   checkApiStatus();
-  initFramerMotion();
 });
-
-// Framer Motion Initial Page Animation
-function initFramerMotion() {
-  if (window.Motion) {
-    const { animate, stagger, spring } = window.Motion;
-
-    // Stagger in hero elements
-    animate(
-      '.animate-in',
-      { opacity: [0, 1], y: [16, 0] },
-      { delay: stagger(0.08), duration: 0.5, easing: spring({ stiffness: 220, damping: 24 }) }
-    );
-  }
-}
-
-// Check Groq API Key Status
-async function checkApiStatus() {
-  try {
-    const res = await fetch('/api/status');
-    const data = await res.json();
-    if (data.groq_configured) {
-      keyStatusDot.style.background = '#10b981';
-      keyStatusDot.style.boxShadow = '0 0 8px #10b981';
-    } else {
-      keyStatusDot.style.background = '#eab308';
-      keyStatusDot.style.boxShadow = '0 0 8px #eab308';
-      // Automatically prompt key modal if missing
-      openKeyModal();
-    }
-  } catch (e) {
-    console.error('Status check error:', e);
-  }
-}
 
 // Fetch Modules
 async function fetchModules() {
   try {
     const res = await fetch('/api/modules');
     allModules = await res.json();
-    renderModules();
+    renderSidebarModules();
   } catch (err) {
     console.error('Failed to load modules:', err);
   }
 }
 
-// Render Bento Modules
-function renderModules() {
-  const filtered = allModules.filter(m => {
-    if (currentFilter !== 'all' && m.id !== currentFilter) return false;
-    return true;
-  });
-
-  modulesGrid.innerHTML = filtered.map(m => `
-    <article class="bento-card" onclick="askAboutModule('${m.id}')">
-      <div class="card-top-row">
-        <span class="card-week-pill">${m.week.toUpperCase()}</span>
-        <span class="card-slides-badge">${m.slides}</span>
+// Render Course Modules in Left Sidebar (Claude style)
+function renderSidebarModules() {
+  modulesList.innerHTML = allModules.map(m => `
+    <div class="module-nav-item ${activeModuleFilter === m.id ? 'active' : ''}" data-id="${m.id}">
+      <div class="module-item-top">
+        <span class="module-week-tag">${m.week.toUpperCase()}</span>
+        <span class="module-slides-count">${m.slides}</span>
       </div>
-
-      <h3 class="bento-title">${m.title}</h3>
-      <p class="bento-desc">${m.description}</p>
-
-      <div class="bento-tags">
-        ${m.topics.slice(0, 3).map(t => `<span class="bento-tag">${t}</span>`).join('')}
+      <div class="module-item-title" title="${m.title}">${m.title}</div>
+      <div class="module-item-actions">
+        <button class="mini-action-pill" onclick="event.stopPropagation(); selectModuleAndAction('${m.id}', 'study')">Study</button>
+        <button class="mini-action-pill" onclick="event.stopPropagation(); selectModuleAndAction('${m.id}', 'quiz')">Quiz</button>
       </div>
-
-      <div class="bento-footer">
-        <button class="card-study-btn" onclick="event.stopPropagation(); askAboutModule('${m.id}')">
-          <span>Study Guide</span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-        </button>
-        <button class="card-quiz-btn" onclick="event.stopPropagation(); quizOnModule('${m.id}')">
-          ⚡ Quiz Me
-        </button>
-      </div>
-    </article>
+    </div>
   `).join('');
 
-  // Animate cards on filter change
-  if (window.Motion) {
-    const { animate, stagger, spring } = window.Motion;
-    animate(
-      '.bento-card',
-      { opacity: [0, 1], scale: [0.98, 1], y: [10, 0] },
-      { delay: stagger(0.04), duration: 0.35, easing: spring({ stiffness: 260, damping: 24 }) }
-    );
+  // Attach click listener to each module
+  modulesList.querySelectorAll('.module-nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const id = item.getAttribute('data-id');
+      selectModule(id);
+    });
+  });
+}
+
+// Module Selection
+function selectModule(id) {
+  activeModuleFilter = id;
+  const m = allModules.find(x => x.id === id);
+
+  modulesList.querySelectorAll('.module-nav-item').forEach(item => {
+    item.classList.toggle('active', item.getAttribute('data-id') === id);
+  });
+
+  if (m) {
+    activeScopeLabel.textContent = `${m.week}: ${m.title}`;
+  } else {
+    activeScopeLabel.textContent = 'All 6 Weeks Active';
+  }
+}
+
+function selectModuleAndAction(id, action) {
+  selectModule(id);
+  const m = allModules.find(x => x.id === id);
+  if (!m) return;
+
+  if (action === 'study') {
+    sendQuery(`Explain the key concepts and exam-relevant topics from ${m.week} (${m.title}) based on our slides.`);
+  } else if (action === 'quiz') {
+    sendQuery(`Generate 3 practice midterm exam questions (including 1 case dilemma) specifically on ${m.week}: ${m.title}. Provide hints and full step-by-step reasoning.`);
   }
 }
 
 // Event Listeners
 function setupEventListeners() {
-  // Main Spotlight Search
-  mainSubmitBtn.addEventListener('click', () => {
-    const q = mainQuestionInput.value.trim();
-    if (!q) return;
-    openDrawer();
-    sendQuery(q);
-    mainQuestionInput.value = '';
+  // Sidebar Toggle (Desktop)
+  sidebarToggleBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('collapsed');
   });
 
-  mainQuestionInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      mainSubmitBtn.click();
-    }
+  // Mobile Sidebar Toggle
+  mobileSidebarBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('mobile-open');
   });
 
-  // Global shortcut (Ctrl + K or Cmd + K)
-  document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-      e.preventDefault();
-      mainQuestionInput.focus();
-    }
-  });
+  // New Chat
+  newChatBtn.addEventListener('click', resetChat);
 
-  // Prompt Chips
-  document.querySelectorAll('.chip-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const q = btn.getAttribute('data-query');
-      openDrawer();
-      sendQuery(q);
+  // Suggestion Cards
+  document.querySelectorAll('.suggestion-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const query = card.getAttribute('data-query');
+      sendQuery(query);
     });
   });
 
-  // Filter Pills
-  filterPillsContainer.querySelectorAll('.pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      filterPillsContainer.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-      currentFilter = pill.getAttribute('data-filter');
-      renderModules();
-    });
-  });
-
-  // Drawer Controls
-  drawerCloseBtn.addEventListener('click', closeDrawer);
-  chatOverlay.addEventListener('click', closeDrawer);
-
-  // Drawer Form Submit
-  drawerChatForm.addEventListener('submit', (e) => {
+  // Form Submit
+  chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const q = drawerInput.value.trim();
-    if (!q || isStreaming) return;
-    sendQuery(q);
-    drawerInput.value = '';
-    drawerInput.style.height = 'auto';
+    const text = messageInput.value.trim();
+    if (!text || isStreaming) return;
+    sendQuery(text);
+    messageInput.value = '';
+    messageInput.style.height = 'auto';
   });
 
-  drawerInput.addEventListener('keydown', (e) => {
+  // Auto-resize & Enter to send
+  messageInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      drawerChatForm.dispatchEvent(new Event('submit'));
+      chatForm.dispatchEvent(new Event('submit'));
     }
   });
 
-  drawerInput.addEventListener('input', () => {
-    drawerInput.style.height = 'auto';
-    drawerInput.style.height = Math.min(drawerInput.scrollHeight, 120) + 'px';
+  messageInput.addEventListener('input', () => {
+    messageInput.style.height = 'auto';
+    messageInput.style.height = Math.min(messageInput.scrollHeight, 140) + 'px';
   });
 
   // API Key Modal Listeners
   navKeyBtn.addEventListener('click', openKeyModal);
   modalCloseBtn.addEventListener('click', closeKeyModal);
+  modalCancelBtn.addEventListener('click', closeKeyModal);
   keyModalOverlay.addEventListener('click', (e) => {
     if (e.target === keyModalOverlay) closeKeyModal();
   });
@@ -205,12 +160,12 @@ function setupEventListeners() {
     if (!key) {
       modalKeyMsg.style.display = 'block';
       modalKeyMsg.style.color = '#ef4444';
-      modalKeyMsg.textContent = 'Please enter a valid Groq API key.';
+      modalKeyMsg.textContent = 'Please enter your Groq API key.';
       return;
     }
 
     modalSaveKeyBtn.disabled = true;
-    modalSaveKeyBtn.textContent = 'Activating...';
+    modalSaveKeyBtn.textContent = 'Saving...';
     modalKeyMsg.style.display = 'none';
 
     try {
@@ -222,15 +177,14 @@ function setupEventListeners() {
       const data = await res.json();
       if (res.ok) {
         modalKeyMsg.style.display = 'block';
-        modalKeyMsg.style.color = '#10b981';
-        modalKeyMsg.textContent = 'Groq API Key active and verified!';
-        keyStatusDot.style.background = '#10b981';
-        keyStatusDot.style.boxShadow = '0 0 8px #10b981';
+        modalKeyMsg.style.color = '#34d399';
+        modalKeyMsg.textContent = 'Key verified and active!';
+        keyStatusDot.style.background = '#34d399';
         setTimeout(() => closeKeyModal(), 1000);
       } else {
         modalKeyMsg.style.display = 'block';
         modalKeyMsg.style.color = '#ef4444';
-        modalKeyMsg.textContent = data.detail || 'Failed to activate key.';
+        modalKeyMsg.textContent = data.detail || 'Failed to save key.';
       }
     } catch (e) {
       modalKeyMsg.style.display = 'block';
@@ -238,41 +192,37 @@ function setupEventListeners() {
       modalKeyMsg.textContent = 'Server connection error.';
     } finally {
       modalSaveKeyBtn.disabled = false;
-      modalSaveKeyBtn.textContent = 'Save & Activate';
+      modalSaveKeyBtn.textContent = 'Save Key';
     }
   });
 }
 
-// Drawer Controls
-function openDrawer() {
-  studyDrawer.classList.add('active');
-  chatOverlay.classList.add('active');
-  document.body.style.overflow = 'hidden';
-  setTimeout(() => drawerInput.focus(), 250);
+// Reset Chat Session (New Chat)
+function resetChat() {
+  chatHistory = [];
+  chatThread.innerHTML = '';
+  welcomeView.style.display = 'block';
+  selectModule('all');
+  activeScopeLabel.textContent = 'All 6 Weeks Active';
+  messageInput.focus();
 }
 
-function closeDrawer() {
-  studyDrawer.classList.remove('active');
-  chatOverlay.classList.remove('active');
-  document.body.style.overflow = '';
+// Check API status
+async function checkApiStatus() {
+  try {
+    const res = await fetch('/api/status');
+    const data = await res.json();
+    if (data.groq_configured) {
+      keyStatusDot.style.background = '#34d399';
+    } else {
+      keyStatusDot.style.background = '#eab308';
+      openKeyModal();
+    }
+  } catch (e) {
+    console.error('Failed to check status:', e);
+  }
 }
 
-// Card Actions
-window.askAboutModule = function(moduleId) {
-  const m = allModules.find(x => x.id === moduleId);
-  if (!m) return;
-  openDrawer();
-  sendQuery(`Explain the key concepts from ${m.week} (${m.title}) that are most likely to appear on the midterm exam.`);
-};
-
-window.quizOnModule = function(moduleId) {
-  const m = allModules.find(x => x.id === moduleId);
-  if (!m) return;
-  openDrawer();
-  sendQuery(`Generate 3 practice midterm exam questions (including 1 dilemma scenario) specifically on ${m.week}: ${m.title}. Provide step-by-step reasoning.`);
-};
-
-// Modal Controls
 function openKeyModal() {
   keyModalOverlay.classList.add('active');
   modalApiKeyInput.focus();
@@ -283,16 +233,21 @@ function closeKeyModal() {
   modalKeyMsg.style.display = 'none';
 }
 
-// Send Query with SSE streaming
+// Send Query with SSE streaming (Claude Canvas)
 async function sendQuery(userMessage) {
   if (isStreaming) return;
   isStreaming = true;
 
-  appendBubble('user', userMessage);
+  // Hide welcome view
+  welcomeView.style.display = 'none';
+
+  // Append user bubble
+  appendUserMessage(userMessage);
   chatHistory.push({ role: 'user', content: userMessage });
 
-  const assistantBubble = appendBubble('assistant', '<span class="cursor-blink"></span>');
-  const bubbleText = assistantBubble.querySelector('.bubble-text');
+  // Append assistant message container with typing cursor
+  const assistantWrap = appendAssistantMessage('<span class="typing-cursor"></span>');
+  const bodyEl = assistantWrap.querySelector('.assistant-body');
 
   let accumulatedText = '';
   let sourcesList = [];
@@ -304,7 +259,7 @@ async function sendQuery(userMessage) {
       body: JSON.stringify({
         message: userMessage,
         history: chatHistory.slice(-4),
-        week_filter: currentFilter
+        week_filter: activeModuleFilter
       })
     });
 
@@ -344,8 +299,8 @@ async function sendQuery(userMessage) {
           try {
             const parsed = JSON.parse(dataStr);
             accumulatedText += parsed.token;
-            bubbleText.innerHTML = formatMarkdown(accumulatedText) + '<span class="cursor-blink"></span>';
-            drawerMessages.scrollTop = drawerMessages.scrollHeight;
+            bodyEl.innerHTML = formatMarkdown(accumulatedText) + '<span class="typing-cursor"></span>';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
           } catch (e) {}
         } else if (eventType === 'error') {
           try {
@@ -356,11 +311,11 @@ async function sendQuery(userMessage) {
       }
     }
 
-    // Done streaming - append citations cleanly
+    // Done streaming - append slide citations
     let finalText = formatMarkdown(accumulatedText);
     if (sourcesList && sourcesList.length > 0) {
       const pillsHtml = sourcesList.map(s => `
-        <span class="citation-chip" title="${s.snippet}">
+        <span class="citation-pill" title="${s.snippet}">
           📄 ${s.file} (p. ${s.page})
         </span>
       `).join('');
@@ -373,44 +328,58 @@ async function sendQuery(userMessage) {
       `;
     }
 
-    bubbleText.innerHTML = finalText;
+    bodyEl.innerHTML = finalText;
     chatHistory.push({ role: 'assistant', content: accumulatedText });
 
   } catch (err) {
-    bubbleText.innerHTML = `<p style="color: #ef4444;">Error: ${err.message}. Please verify server connection.</p>`;
+    bodyEl.innerHTML = `<p style="color: #ef4444;">Error: ${err.message}. Please check your server connection.</p>`;
   } finally {
     isStreaming = false;
-    drawerMessages.scrollTop = drawerMessages.scrollHeight;
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
   }
 }
 
-// Append Bubble Helper
-function appendBubble(role, contentHtml) {
-  const div = document.createElement('div');
-  div.className = `message-bubble ${role}`;
-  div.innerHTML = `
-    <div class="bubble-header">
-      <span class="avatar-badge">${role === 'user' ? '👤' : '⚖️'}</span>
-      <span class="sender-name">${role === 'user' ? 'You' : 'Ethica Tutor'}</span>
+// User Bubble
+function appendUserMessage(text) {
+  const row = document.createElement('div');
+  row.className = 'message-row user';
+  row.innerHTML = `<div class="user-bubble">${escapeHtml(text)}</div>`;
+  chatThread.appendChild(row);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Assistant Bubble
+function appendAssistantMessage(htmlContent) {
+  const row = document.createElement('div');
+  row.className = 'message-row assistant';
+  row.innerHTML = `
+    <div class="assistant-wrap">
+      <div class="assistant-avatar">⚖️</div>
+      <div class="assistant-body">${htmlContent}</div>
     </div>
-    <div class="bubble-text">${contentHtml}</div>
   `;
-  drawerMessages.appendChild(div);
-  drawerMessages.scrollTop = drawerMessages.scrollHeight;
-  return div;
+  chatThread.appendChild(row);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  return row;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 // Simple Markdown Formatter
 function formatMarkdown(text) {
   if (!text) return '';
   return text
-    .replace(/^### (.*$)/gim, '<h4 style="margin: 12px 0 4px; font-weight: 600; color: #f4f4f5;">$1</h4>')
-    .replace(/^## (.*$)/gim, '<h3 style="margin: 14px 0 6px; font-weight: 600; color: #f4f4f5; font-size: 1.15rem;">$1</h3>')
-    .replace(/^# (.*$)/gim, '<h2 style="margin: 16px 0 8px; font-weight: 700; color: #f4f4f5;">$1</h2>')
-    .replace(/\*\*(.*?)\*\*/gim, '<strong style="color: #ffffff;">$1</strong>')
+    .replace(/^### (.*$)/gim, '<h4>$1</h4>')
+    .replace(/^## (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^# (.*$)/gim, '<h2>$1</h2>')
+    .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/gim, '<em>$1</em>')
-    .replace(/`([^`]+)`/gim, '<code style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.85em; color: #e4e4e7;">$1</code>')
-    .replace(/^\s*-\s+(.*$)/gim, '<li style="margin-left: 18px; margin-bottom: 4px; color: #d4d4d8;">$1</li>')
+    .replace(/`([^`]+)`/gim, '<code style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.88em; color: #eceae5;">$1</code>')
+    .replace(/^\s*-\s+(.*$)/gim, '<li style="margin-left: 20px; margin-bottom: 4px;">$1</li>')
     .replace(/\n\n/gim, '<br/><br/>')
     .replace(/\n/gim, '<br/>');
 }

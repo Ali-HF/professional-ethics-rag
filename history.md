@@ -183,14 +183,34 @@ This document tracks the chronological sequence of problems encountered, diagnos
 
 ---
 
+### Step 10: Claude-Inspired Interface & Left Module Sidebar
+- **User Request**: Redesign the interface to feel like **Claude (Anthropic)**, moving the course modules into a persistent navigation bar on the left.
+- **Architectural & Layout Shift**:
+  1. **Claude-Style App Shell**:
+     - Divided workspace into a persistent collapsible left sidebar (`width: 280px`) and an expansive, centered main chat canvas.
+     - Palette: Warm obsidian charcoal (`#181716` to `#242321`) accented with Claude's signature terracotta (`#d97757`) and serif headings (`Newsreader`).
+  2. **Left Sidebar (Modules & Scope Navigator)**:
+     - Houses all 6 course lecture modules (`Week 1` through `Week 6`) with slide counts and week tags.
+     - Clicking any module dynamically scopes the RAG study queries to that specific week and displays an active context indicator in the top bar.
+     - Hovering reveals instant micro-actions: `Study` (summarizes key concepts) and `Quiz` (generates 3 exam questions).
+     - Includes `+ New Study Session` to reset context, Groq API key indicator, and GitHub link.
+  3. **Central Chat Workspace**:
+     - Claude-inspired welcoming empty state: *"How can I help you study today?"* with 4 quick suggestion cards for common midterm prep tasks.
+     - Centered message thread (`max-width: 760px`) with generous line spacing, distinct user bubbles, and clean slide citation pills (`📄 Week 4.pdf (p. 12)`).
+     - Claude-style floating bottom input dock with auto-expanding textarea, keyboard hints (`Enter ↵` to send, `Shift + Enter` for new lines), and terracotta send button.
+
+---
+
 ## 📌 Summary of Core Decisions
 
 | Decision | Selected Choice | Rejected Alternative | Primary Reason |
 |---|---|---|---|
-| **UI Paradigm** | 21st.dev Minimalist Bento + Spotlight | Graphic-heavy Banao cards | Distraction-free, modern developer aesthetic, faster scanning. |
+| **UI Paradigm** | Claude.ai Layout (Left Sidebar + Center Chat) | Dashboard / Grid Views | Uninterrupted conversation flow, dedicated course navigation, natural study experience. |
+| **Theme & Accent** | Warm Obsidian & Terracotta (`#d97757`) | Generic Dark Blue / Purple | Low eye-fatigue, premium editorial atmosphere, signature Claude aesthetic. |
 | **Animation Engine** | Framer Motion (`window.Motion`) | CSS keyframe animations | Natural spring physics, staggered list rendering, smooth layout transitions. |
 | **Embedding Engine** | FastEmbed (`bge-small-en-v1.5`) | OpenAI Embeddings | Zero cost, runs 100% locally on CPU, no paid API key required. |
 | **Inference LLM** | Groq (`qwen/qwen3.8-27b`) | OpenAI `gpt-4o-mini` | Blazing fast inference (~2s response), free API access, available on user's key. |
 | **Backend Framework** | FastAPI + Uvicorn | Pure Gradio | Full control over custom editorial HTML/CSS design, SSE token streaming, and API key management. |
 | **Student UX** | `start.bat` & Web Key Modal | Manual terminal commands | Enables non-technical classmates to run the RAG system by double-clicking a single file. |
+
 
