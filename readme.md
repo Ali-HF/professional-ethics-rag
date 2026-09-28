@@ -1,56 +1,48 @@
-<h1>Chatbot with RAG and LangChain</h1>
+# ⚖️ Professional Ethics Midterm Prep (RAG Chatbot)
 
-<h2>Watch the full tutorial on my YouTube Channel</h2>
-<div>
+A Retrieval-Augmented Generation (RAG) assistant designed for studying and preparing for Professional Ethics midterm examinations.
 
-<a href="https://www.youtube.com/watch?v=xf3gAFclwqo">
-    <img src="thumbnail_small.png" alt="Thomas Janssen Youtube" width="200"/>
-</a>
-</div>
+Powered by **Groq** (`llama-3.3-70b-versatile`), **FastEmbed** (`BAAI/bge-small-en-v1.5` running locally via ONNX), and **ChromaDB**.
 
-<h2>Prerequisites</h2>
-<ul>
-  <li>Python 3.11+</li>
-</ul>
+## Features
+- **Ground Truth Course Search**: Queries your 6 course lecture slides/notes and cites exact source files and page numbers.
+- **Ethics Frameworks**: Built-in support for analyzing dilemmas using Utilitarianism, Deontology/Kantianism, Virtue Ethics, and Social Contract theory.
+- **Code of Ethics Review**: Quick lookup and explanation of ACM, IEEE, and Software Engineering codes of ethics.
+- **Exam Practice Mode**: Generates realistic midterm questions (MCQs, short-answer, and case analysis).
+- **100% Free**: Uses free Groq API for inference and free local embeddings (no OpenAI API key required).
 
-<h2>Installation</h2>
-<h3>1. Clone the repository:</h3>
+---
 
-```
-git clone https://github.com/ThomasJanssen-tech/Chatbot-with-RAG-and-LangChain.git
-cd Chatbot-with-RAG-and-LangChain
-```
+## Setup & Running
 
-<h3>2. Create a virtual environment</h3>
-
-```
-python -m venv venv
+### 1. Create and Activate Virtual Environment
+```powershell
+py -m venv venv
+.\venv\Scripts\Activate.ps1
 ```
 
-<h3>3. Activate the virtual environment</h3>
-
-```
-venv\Scripts\Activate
-(or on Mac): source venv/bin/activate
-```
-
-<h3>4. Install libraries</h3>
-
-```
+### 2. Install Dependencies
+```powershell
 pip install -r requirements.txt
 ```
 
-<h3>5. Add OpenAI API Key</h3>
-Rename the .env.example file to .env
-Add your OpenAI API Key
-
-<h2>Executing the scripts</h2>
-
-- Open a terminal in VS Code
-
-- Execute the following command:
-
+### 3. Add Groq API Key
+Copy `.env.example` to `.env` and set your key:
+```env
+GROQ_API_KEY="gsk_..."
 ```
+
+### 4. Add Course PDFs
+Place your 6 course PDFs inside the `data/` directory.
+
+### 5. Ingest Database
+Run the ingestion script to parse and embed the documents:
+```powershell
 python ingest_database.py
+```
+
+### 6. Launch the Assistant
+Start the interactive Gradio web app:
+```powershell
 python chatbot.py
 ```

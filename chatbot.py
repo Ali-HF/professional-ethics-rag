@@ -1,77 +1,107 @@
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain_chroma import Chroma
+import os
 import gradio as gr
-
-# import the .env file
 from dotenv import load_dotenv
+
+from langchain_groq import ChatGroq
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
+from langchain_chroma import Chroma
+
+# Load environment variables
 load_dotenv()
 
-# configuration
-DATA_PATH = r"data"
+# Verify GROQ_API_KEY
+if not os.getenv("GROQ_API_KEY"):
+    print("WARNING: GROQ_API_KEY not found in .env file! Please add it before chatting.")
+
+# Configuration
 CHROMA_PATH = r"chroma_db"
 
-embeddings_model = OpenAIEmbeddings(model="text-embedding-3-large")
+# Initialize local embedding model matching ingest_database.py
+embeddings_model = FastEmbedEmbeddings(model_name="BAAI/bge-small-en-v1.5")
 
-# initiate the model
-llm = ChatOpenAI(temperature=0.5, model='gpt-4o-mini')
-
-# connect to the chromadb
-vector_store = Chroma(
-    collection_name="example_collection",
-    embedding_function=embeddings_model,
-    persist_directory=CHROMA_PATH, 
+# Initialize Groq LLM (Llama 3.3 70B - fast, accurate, free tier)
+llm = ChatGroq(
+    model_name="llama-3.3-70b-versatile",
+    temperature=0.3,
+    streaming=True
 )
 
-# Set up the vectorstore to be the retriever
-num_results = 5
-retriever = vector_store.as_retriever(search_kwargs={'k': num_results})
+# Connect to ChromaDB
+vector_store = Chroma(
+    collection_name="ethics_collection",
+    embedding_function=embeddings_model,
+    persist_directory=CHROMA_PATH,
+)
 
-# call this function for every message added to the chatbot
+# Retrieve top relevant context chunks
+retriever = vector_store.as_retriever(search_kwargs={"k": 5})
+
 def stream_response(message, history):
-    #print(f"Input: {message}. History: {history}\n")
+    if not message or not message.strip():
+        yield "Please enter a question or topic about your Professional Ethics course."
+        return
 
-    # retrieve the relevant chunks based on the question asked
+    # Retrieve relevant document chunks
     docs = retriever.invoke(message)
 
-    # add all the chunks to 'knowledge'
-    knowledge = ""
-
+    # Format retrieved knowledge with file sources and pages
+    knowledge_blocks = []
+    sources = set()
     for doc in docs:
-        knowledge += doc.page_content+"\n\n"
+        source_name = os.path.basename(doc.metadata.get("source", "PDF"))
+        page = doc.metadata.get("page", 0) + 1  # 1-indexed for student convenience
+        sources.add(f"- `{source_name}` (Page {page})")
+        knowledge_blocks.append(f"[{source_name} - Page {page}]:\n{doc.page_content}")
 
+    knowledge_text = "\n\n---\n\n".join(knowledge_blocks)
 
-    # make the call to the LLM (including prompt)
-    if message is not None:
+    # Professional Ethics Midterm Study Prompt
+    prompt = f"""You are an expert tutor for a university-level Professional Ethics course, helping a student prepare for their midterm exam.
 
-        partial_message = ""
+Your goal is to provide accurate, comprehensive, and well-structured answers strictly grounded in the course materials provided below.
 
-        rag_prompt = f"""
-        You are an assistent which answers questions based on knowledge which is provided to you.
-        While answering, you don't use your internal knowledge, 
-        but solely the information in the "The knowledge" section.
-        You don't mention anything to the user about the povided knowledge.
+When answering:
+1. Ground your answer in the provided knowledge.
+2. If asked about ethical theories (e.g. Utilitarianism, Kantianism/Deontology, Virtue Ethics, Social Contract, Rights theory), clearly define them and show how they apply.
+3. If asked about professional codes (e.g. ACM, IEEE, Software Engineering Code of Ethics), quote or reference the relevant principles.
+4. If asked for practice questions or quizzes, generate realistic midterm-style questions (MCQs, short answer, or dilemma case studies) and provide explanations.
+5. If the information is not in the course materials, state that it isn't covered in their uploaded PDFs.
 
-        The question: {message}
+=== COURSE MATERIALS (KNOWLEDGE) ===
+{knowledge_text}
 
-        Conversation history: {history}
+=== CONVERSATION HISTORY ===
+{history}
 
-        The knowledge: {knowledge}
+=== STUDENT QUESTION ===
+{message}
 
-        """
+Please provide a clear, structured study response. Conclude with a 'Referenced Sources' section listing the relevant slides/pages."""
 
-        print(rag_prompt)
-
-        # stream the response to the Gradio App
-        for response in llm.stream(rag_prompt):
-            partial_message += response.content
+    partial_message = ""
+    try:
+        for chunk in llm.stream(prompt):
+            partial_message += chunk.content
             yield partial_message
+    except Exception as e:
+        yield f"Error generating response: {str(e)}\n\nMake sure your GROQ_API_KEY is correctly set in .env."
 
-# initiate the Gradio app
-chatbot = gr.ChatInterface(stream_response, textbox=gr.Textbox(placeholder="Send to the LLM...",
-    container=False,
-    autoscroll=True,
-    scale=7),
+# Example study prompts for midterms
+examples = [
+    "What are the main ethical theories covered in the slides, and how do they differ?",
+    "Generate 5 multiple-choice midterm exam questions with explanations from our PDFs.",
+    "Explain the ACM and IEEE Code of Ethics and their core obligations for computing professionals.",
+    "Give me an ethical dilemma case study (e.g. whistleblower or privacy issue) and analyze it step-by-step.",
+    "What are the key topics and definitions most likely to be tested on the midterm?"
+]
+
+demo = gr.ChatInterface(
+    stream_response,
+    title="⚖️ Professional Ethics Midterm Prep Assistant (RAG)",
+    description="Ask questions, generate practice midterm questions, and analyze ethical case studies based directly on your course PDFs.",
+    textbox=gr.Textbox(placeholder="Ask anything about your ethics slides (e.g., 'Quiz me on Chapter 2', 'Explain Deontology vs Utilitarianism')...", scale=7),
+    examples=examples,
 )
 
-# launch the Gradio app
-chatbot.launch()
+if __name__ == "__main__":
+    demo.launch(inbrowser=True)

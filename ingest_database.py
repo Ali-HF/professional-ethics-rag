@@ -1,45 +1,62 @@
+import os
+import shutil
+from uuid import uuid4
+from dotenv import load_dotenv
+
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai.embeddings import OpenAIEmbeddings
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 from langchain_chroma import Chroma
-from uuid import uuid4
 
-# import the .env file
-from dotenv import load_dotenv
+# Load environment variables
 load_dotenv()
 
-# configuration
+# Configuration
 DATA_PATH = r"data"
 CHROMA_PATH = r"chroma_db"
 
-# initiate the embeddings model
-embeddings_model = OpenAIEmbeddings(model="text-embedding-3-large")
+def ingest():
+    print(f"Scanning for PDF documents in '{DATA_PATH}'...")
+    loader = PyPDFDirectoryLoader(DATA_PATH)
+    raw_documents = loader.load()
 
-# initiate the vector store
-vector_store = Chroma(
-    collection_name="example_collection",
-    embedding_function=embeddings_model,
-    persist_directory=CHROMA_PATH,
-)
+    if not raw_documents:
+        print(f"No PDF documents found in '{DATA_PATH}' folder!")
+        print("Please place your 6 Professional Ethics PDFs inside the 'data/' directory.")
+        return
 
-# loading the PDF document
-loader = PyPDFDirectoryLoader(DATA_PATH)
+    print(f"Loaded {len(raw_documents)} pages across all PDF documents.")
 
-raw_documents = loader.load()
+    # Splitting into overlapping chunks
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=600,
+        chunk_overlap=150,
+        length_function=len,
+        is_separator_regex=False,
+    )
+    chunks = text_splitter.split_documents(raw_documents)
+    print(f"Created {len(chunks)} chunks for vector embedding.")
 
-# splitting the document
-text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=300,
-    chunk_overlap=100,
-    length_function=len,
-    is_separator_regex=False,
-)
+    # Free, high-performance local embedding model (ONNX-accelerated, runs locally on CPU)
+    print("Initializing local embedding model (BAAI/bge-small-en-v1.5)...")
+    embeddings_model = FastEmbedEmbeddings(model_name="BAAI/bge-small-en-v1.5")
 
-# creating the chunks
-chunks = text_splitter.split_documents(raw_documents)
+    # Recreate the vector store cleanly
+    if os.path.exists(CHROMA_PATH):
+        print(f"Removing old vector database at '{CHROMA_PATH}' for fresh rebuild...")
+        shutil.rmtree(CHROMA_PATH, ignore_errors=True)
 
-# creating unique ID's
-uuids = [str(uuid4()) for _ in range(len(chunks))]
+    print("Building Chroma vector store...")
+    vector_store = Chroma(
+        collection_name="ethics_collection",
+        embedding_function=embeddings_model,
+        persist_directory=CHROMA_PATH,
+    )
 
-# adding chunks to vector store
-vector_store.add_documents(documents=chunks, ids=uuids)
+    uuids = [str(uuid4()) for _ in range(len(chunks))]
+    vector_store.add_documents(documents=chunks, ids=uuids)
+    print(f"\nSUCCESS: Ingested {len(chunks)} chunks into '{CHROMA_PATH}'!")
+    print("You can now run 'python chatbot.py' to launch your ethics study assistant.")
+
+if __name__ == "__main__":
+    ingest()
