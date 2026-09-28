@@ -1,4 +1,20 @@
+# Secrets & Local Environment
 .env
-venv
+.env.example
+venv/
+env/
+*.env
+
+# Python & Cache
 __pycache__/
+*.pyc
+*.pyo
 chroma_db/
+
+# Agent, Tooling & Internal Development Metadata
+history.md
+.agents/
+.gemini/
+.claude/
+.cursor/
+*.log
