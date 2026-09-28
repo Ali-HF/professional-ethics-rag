@@ -32,47 +32,42 @@ Featuring an editorial paper-aesthetic web interface inspired by modern design s
 
 ---
 
-## 🚀 Quickstart Guide
+## 🚀 1-Click Quickstart (Easiest Way)
 
-Follow these steps to run the assistant locally on your computer:
+All 6 course lecture slides (`Week 1.pdf` through `Week 6.pdf`) are **already packaged in this repository**!
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/Ali-HF/professional-ethics-rag.git
-cd professional-ethics-rag
-```
-
-### 2. Create and Activate a Virtual Environment
-
-**Windows (PowerShell):**
-```powershell
-py -m venv venv
-.\venv\Scripts\Activate.ps1
-```
-
-**macOS / Linux:**
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 3. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Configure Your Groq API Key
-1. Get a free API key from **[Groq Console](https://console.groq.com/keys)**.
-2. Create a `.env` file in the project root (or copy `.env.example`):
+### On Windows:
+1. **Clone the repository**:
    ```bash
-   cp .env.example .env
+   git clone https://github.com/Ali-HF/professional-ethics-rag.git
+   cd professional-ethics-rag
    ```
-3. Open `.env` and add your key:
-   ```env
-   GROQ_API_KEY="gsk_your_actual_groq_api_key_here"
+2. **Double-click [`start.bat`](start.bat)**.
+   - It automatically sets up Python, installs all dependencies, indexes the slides, prompts for your free Groq key (if needed), and pops open your browser at `http://localhost:7860`!
+
+### On macOS / Linux:
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Ali-HF/professional-ethics-rag.git
+   cd professional-ethics-rag
+   ```
+2. **Run the launcher**:
+   ```bash
+   chmod +x start.sh
+   ./start.sh
    ```
 
-### 5. Add Your Course PDFs
+---
+
+## 🔑 In-App Groq Key Setup
+You don't even have to edit files manually!
+1. When the app opens, click the **🔑 API Key** button in the top navigation bar.
+2. Paste your free key from **[Groq Console](https://console.groq.com/keys)** and click **Save & Activate Key**.
+3. It will activate immediately with zero restarts required!
+
+---
+
+## 🛠️ Manual Terminal Setup (Alternative)
 Place all your lecture slides / course PDFs inside the `data/` folder:
 ```text
 data/

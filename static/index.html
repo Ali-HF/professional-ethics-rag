@@ -22,14 +22,14 @@
         <span class="brand-badge">CT-268</span>
       </div>
       <div class="nav-actions">
+        <button id="navKeyBtn" class="nav-pill-btn">
+          <span id="keyStatusDot" class="status-pulse" style="width: 6px; height: 6px; margin-right: 4px;"></span>
+          API Key
+        </button>
         <a href="https://github.com/Ali-HF/professional-ethics-rag" target="_blank" class="nav-pill-btn">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
           GitHub Repo
         </a>
-        <button id="navOpenOutlineBtn" class="nav-pill-btn outline">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-          Course Outline
-        </button>
       </div>
     </div>
   </nav>
@@ -171,6 +171,28 @@
       </div>
     </form>
   </aside>
+
+  <!-- Groq API Key Setup Modal -->
+  <div class="modal-overlay" id="keyModalOverlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="eyebrow-badge">FREE SETUP</div>
+        <h3 class="modal-title">Configure Groq API Key</h3>
+        <p class="modal-subtext">Groq provides free, ultra-fast LLM inference. Get a key in 30 seconds at <a href="https://console.groq.com/keys" target="_blank" style="color: var(--color-gold); font-weight: 600;">console.groq.com/keys</a>.</p>
+      </div>
+
+      <div class="modal-body">
+        <label for="modalApiKeyInput" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--text-dim); display: block; margin-bottom: 6px;">Groq API Key</label>
+        <input type="password" id="modalApiKeyInput" placeholder="gsk_..." style="width: 100%; padding: 12px 14px; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.9rem; outline: none; margin-bottom: 12px;" />
+        <div id="modalKeyMsg" style="font-size: 0.82rem; margin-bottom: 12px; display: none;"></div>
+      </div>
+
+      <div class="modal-footer" style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button id="modalCloseBtn" class="nav-pill-btn" style="border: 1px solid var(--border-subtle);">Cancel</button>
+        <button id="modalSaveKeyBtn" class="btn-primary-dark" style="padding: 10px 20px; font-size: 0.85rem;">Save & Activate Key</button>
+      </div>
+    </div>
+  </div>
 
   <script src="/app.js"></script>
 </body>

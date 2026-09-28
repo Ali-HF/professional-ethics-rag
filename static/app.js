@@ -22,12 +22,51 @@ const chatInput = document.getElementById('chatInput');
 const chatMessages = document.getElementById('chatMessages');
 const countdownClock = document.getElementById('countdownClock');
 
+// Modal Elements
+const navKeyBtn = document.getElementById('navKeyBtn');
+const keyStatusDot = document.getElementById('keyStatusDot');
+const keyModalOverlay = document.getElementById('keyModalOverlay');
+const modalApiKeyInput = document.getElementById('modalApiKeyInput');
+const modalSaveKeyBtn = document.getElementById('modalSaveKeyBtn');
+const modalCloseBtn = document.getElementById('modalCloseBtn');
+const modalKeyMsg = document.getElementById('modalKeyMsg');
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
   fetchModules();
   setupEventListeners();
   startCountdown();
+  checkApiStatus();
 });
+
+// Check API status
+async function checkApiStatus() {
+  try {
+    const res = await fetch('/api/status');
+    const data = await res.json();
+    if (data.groq_configured) {
+      keyStatusDot.style.background = '#34d399';
+      keyStatusDot.style.boxShadow = '0 0 8px #34d399';
+    } else {
+      keyStatusDot.style.background = '#eab308';
+      keyStatusDot.style.boxShadow = '0 0 8px #eab308';
+      // Auto open modal if not configured
+      openKeyModal();
+    }
+  } catch (e) {
+    console.error('Failed to check status:', e);
+  }
+}
+
+function openKeyModal() {
+  keyModalOverlay.classList.add('active');
+  modalApiKeyInput.focus();
+}
+
+function closeKeyModal() {
+  keyModalOverlay.classList.remove('active');
+  modalKeyMsg.style.display = 'none';
+}
 
 // Fetch modules
 async function fetchModules() {
@@ -135,8 +174,54 @@ function setupEventListeners() {
     openDrawer();
     sendQuery("Generate 5 tricky midterm multiple-choice questions covering all 6 weeks, with detailed explanations.");
   });
-  drawerCloseBtn.addEventListener('click', closeDrawer);
-  drawerOverlay.addEventListener('click', closeDrawer);
+  // Modal toggles
+  navKeyBtn.addEventListener('click', openKeyModal);
+  modalCloseBtn.addEventListener('click', closeKeyModal);
+  keyModalOverlay.addEventListener('click', (e) => {
+    if (e.target === keyModalOverlay) closeKeyModal();
+  });
+
+  modalSaveKeyBtn.addEventListener('click', async () => {
+    const key = modalApiKeyInput.value.trim();
+    if (!key) {
+      modalKeyMsg.style.display = 'block';
+      modalKeyMsg.style.color = '#dc2626';
+      modalKeyMsg.textContent = 'Please paste your Groq API key.';
+      return;
+    }
+
+    modalSaveKeyBtn.disabled = true;
+    modalSaveKeyBtn.textContent = 'Saving...';
+    modalKeyMsg.style.display = 'none';
+
+    try {
+      const res = await fetch('/api/set-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ api_key: key })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        modalKeyMsg.style.display = 'block';
+        modalKeyMsg.style.color = '#16a34a';
+        modalKeyMsg.textContent = data.message || 'Key activated!';
+        keyStatusDot.style.background = '#34d399';
+        keyStatusDot.style.boxShadow = '0 0 8px #34d399';
+        setTimeout(() => closeKeyModal(), 1200);
+      } else {
+        modalKeyMsg.style.display = 'block';
+        modalKeyMsg.style.color = '#dc2626';
+        modalKeyMsg.textContent = data.detail || 'Failed to save key.';
+      }
+    } catch (e) {
+      modalKeyMsg.style.display = 'block';
+      modalKeyMsg.style.color = '#dc2626';
+      modalKeyMsg.textContent = 'Error connecting to server.';
+    } finally {
+      modalSaveKeyBtn.disabled = false;
+      modalSaveKeyBtn.textContent = 'Save & Activate Key';
+    }
+  });
 
   // Quick Chips
   document.querySelectorAll('.quick-chip').forEach(chip => {

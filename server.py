@@ -53,6 +53,34 @@ llm = ChatGroq(
     streaming=True
 )
 
+class KeyRequest(BaseModel):
+    api_key: str
+
+@app.get("/api/status")
+def get_status():
+    key = os.getenv("GROQ_API_KEY", "")
+    is_valid = bool(key and key.startswith("gsk_") and not key.startswith("gsk_..."))
+    return {"groq_configured": is_valid}
+
+@app.post("/api/set-key")
+def set_api_key(req: KeyRequest):
+    global llm
+    key = req.api_key.strip()
+    if not key.startswith("gsk_"):
+        raise HTTPException(status_code=400, detail="Invalid Groq API key format. Must start with 'gsk_'.")
+    
+    os.environ["GROQ_API_KEY"] = key
+    with open(".env", "w") as f:
+        f.write(f'GROQ_API_KEY="{key}"\n')
+    
+    llm = ChatGroq(
+        model_name="qwen/qwen3.8-27b",
+        api_key=key,
+        temperature=0.3,
+        streaming=True
+    )
+    return {"success": True, "message": "Groq API key activated successfully!"}
+
 class ChatRequest(BaseModel):
     message: str
     history: Optional[List[Dict[str, str]]] = []
