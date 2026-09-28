@@ -197,16 +197,34 @@ This document tracks the chronological sequence of problems encountered, diagnos
 
 ---
 
+### Step 11: Sharp Non-Vibecoded Geometry & Color Scheme Reversion
+- **User Request**: Keep the Claude-inspired two-pane layout, but remove the "vibecoded" bubbly rounded corners entirely (strict straight edges), and restore the popular warm cream millimeter-grid, deep forest green, and sand gold color scheme along with the original artwork assets.
+- **Architectural & Design Adjustments**:
+  1. **Brutalist / Sharp Editorial Geometry**:
+     - Stripped all `border-radius` (enforced `border-radius: 0px !important;` globally).
+     - Cards, buttons, inputs, modals, badges, and sidebar items now feature sharp, architectural, hairline borders (`1px solid`).
+     - Eliminates the generic "AI skin" feel in favor of a timeless, bespoke academic/editorial atmosphere.
+  2. **Palette Reversion**:
+     - Background: Restored the signature warm cream paper (`#faf8f5`) with millimeter graph-paper grid lines (`rgba(22, 51, 38, 0.055)`).
+     - Sidebar: Warm linen tone (`#f0ebe2`) with a hairline right border.
+     - Primary Interactive Color: Deep Forest Green (`#163326`).
+     - Accent: Sand Gold (`#c89b3c`) for square badges (`■`), tags, and citation markers.
+  3. **Asset Reintegration**:
+     - Embedded the original visual assets (`hero.jpg`, `week4.jpg`, `week6.jpg`, `week2.jpg`) into the suggestion cards with sharp rectangular framing.
+
+---
+
 ## 📌 Summary of Core Decisions
 
 | Decision | Selected Choice | Rejected Alternative | Primary Reason |
 |---|---|---|---|
-| **UI Paradigm** | Claude.ai Layout (Left Sidebar + Center Chat) | Dashboard / Grid Views | Uninterrupted conversation flow, dedicated course navigation, natural study experience. |
-| **Theme & Accent** | Warm Obsidian & Terracotta (`#d97757`) | Generic Dark Blue / Purple | Low eye-fatigue, premium editorial atmosphere, signature Claude aesthetic. |
-| **Animation Engine** | Framer Motion (`window.Motion`) | CSS keyframe animations | Natural spring physics, staggered list rendering, smooth layout transitions. |
+| **Layout Shell** | Claude-style (Left Modules Sidebar + Central Chat) | Dashboard Cards / Modals | Best user flow for sequential learning and deep reading. |
+| **Geometry** | Sharp Rectangular (`border-radius: 0px`) | Rounded "Vibecoded" Pills | Elegant, architectural, academic precision without generic AI bubbly curves. |
+| **Color Scheme** | Warm Cream Grid + Forest Green + Sand Gold | Dark Obsidian / Monochrome | High legibility, paper aesthetic, university lecture notes feel. |
 | **Embedding Engine** | FastEmbed (`bge-small-en-v1.5`) | OpenAI Embeddings | Zero cost, runs 100% locally on CPU, no paid API key required. |
 | **Inference LLM** | Groq (`qwen/qwen3.8-27b`) | OpenAI `gpt-4o-mini` | Blazing fast inference (~2s response), free API access, available on user's key. |
 | **Backend Framework** | FastAPI + Uvicorn | Pure Gradio | Full control over custom editorial HTML/CSS design, SSE token streaming, and API key management. |
 | **Student UX** | `start.bat` & Web Key Modal | Manual terminal commands | Enables non-technical classmates to run the RAG system by double-clicking a single file. |
+
 
 
