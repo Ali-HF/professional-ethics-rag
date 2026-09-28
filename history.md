@@ -267,10 +267,25 @@ This document tracks the chronological sequence of problems encountered, diagnos
 
 ---
 
+### Step 15: Public Repository Release
+- **User Request**: *"make the repo public"*
+- **Pre-Publication Security & Hygiene Audit**:
+  1. Audited git commit log (`git log -S "gsk_"`) to verify no live personal API keys or `.env` credentials were ever committed.
+  2. Verified `.gitignore` actively protects `.env`, virtual environment caches (`venv/`), and vector store caches.
+- **Repository Visibility Transition**:
+  - Changed GitHub repository visibility from `PRIVATE` to `PUBLIC` using GitHub CLI:
+    ```bash
+    gh repo edit Ali-HF/professional-ethics-rag --visibility public --accept-visibility-change-consequences
+    ```
+  - Verified live status: `https://github.com/Ali-HF/professional-ethics-rag` is publicly accessible for NED University students and open-source contributors.
+
+---
+
 ## 📌 Summary of Core Decisions
 
 | Decision | Selected Choice | Rejected Alternative | Primary Reason |
 |---|---|---|---|
+| **Repository Visibility** | Public (`Ali-HF/professional-ethics-rag`) | Private | Allows classmates to clone, run 1-click `start.bat`, and study freely. |
 | **Inference LLM** | Groq (`openai/gpt-oss-120b` + fallback) | `qwen/qwen3.8-27b` (unbounded) | Eliminates 1,000 OTPM rate limit 429 errors while providing 120B parameter reasoning depth. |
 | **Color Palette** | Cream White + White Beige + Architectural Black | Saturated Forest Green / Neon Emerald | Maximum legibility, serene reading comfort, zero eye fatigue. |
 | **Theme System** | Dual Theme (Cream White Light + Matte Obsidian Dark) | Single-theme | Effortless day and night exam studying with `localStorage` persistence. |
