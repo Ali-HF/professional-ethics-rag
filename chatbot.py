@@ -21,8 +21,9 @@ embeddings_model = FastEmbedEmbeddings(model_name="BAAI/bge-small-en-v1.5")
 
 # Initialize Groq LLM (high-speed, highly capable reasoning model)
 llm = ChatGroq(
-    model_name="qwen/qwen3.8-27b",
+    model_name="openai/gpt-oss-120b",
     temperature=0.3,
+    max_tokens=1500,
     streaming=True
 )
 

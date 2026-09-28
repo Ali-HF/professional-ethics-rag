@@ -47,9 +47,13 @@ groq_key = os.getenv("GROQ_API_KEY")
 if not groq_key:
     print("WARNING: GROQ_API_KEY is not set in .env")
 
+PRIMARY_MODEL = "openai/gpt-oss-120b"
+FALLBACK_MODEL = "openai/gpt-oss-20b"
+
 llm = ChatGroq(
-    model_name="qwen/qwen3.8-27b",
+    model_name=PRIMARY_MODEL,
     temperature=0.3,
+    max_tokens=1500,
     streaming=True
 )
 
@@ -74,9 +78,10 @@ def set_api_key(req: KeyRequest):
         f.write(f'GROQ_API_KEY="{key}"\n')
     
     llm = ChatGroq(
-        model_name="qwen/qwen3.8-27b",
+        model_name=PRIMARY_MODEL,
         api_key=key,
         temperature=0.3,
+        max_tokens=1500,
         streaming=True
     )
     return {"success": True, "message": "Groq API key activated successfully!"}
@@ -237,15 +242,30 @@ Helpful Midterm Exam Prep Answer:"""
         await asyncio.sleep(0.02)
 
         try:
-            # Stream tokens
+            # Stream tokens from primary model
             for chunk in llm.stream(prompt):
                 if chunk.content:
                     payload = json.dumps({"token": chunk.content})
                     yield f"event: token\ndata: {payload}\n\n"
                     await asyncio.sleep(0.005)
         except Exception as e:
-            err_payload = json.dumps({"error": str(e)})
-            yield f"event: error\ndata: {err_payload}\n\n"
+            print(f"Primary model stream error ({e}), retrying with fallback model {FALLBACK_MODEL}...")
+            try:
+                fallback_llm = ChatGroq(
+                    model_name=FALLBACK_MODEL,
+                    api_key=os.getenv("GROQ_API_KEY"),
+                    temperature=0.3,
+                    max_tokens=1000,
+                    streaming=True
+                )
+                for chunk in fallback_llm.stream(prompt):
+                    if chunk.content:
+                        payload = json.dumps({"token": chunk.content})
+                        yield f"event: token\ndata: {payload}\n\n"
+                        await asyncio.sleep(0.005)
+            except Exception as e2:
+                err_payload = json.dumps({"error": f"Groq Error: {str(e2)}"})
+                yield f"event: error\ndata: {err_payload}\n\n"
 
         yield "event: done\ndata: {}\n\n"
 

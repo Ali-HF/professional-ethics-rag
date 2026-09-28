@@ -14,7 +14,7 @@ Featuring an editorial paper-aesthetic web interface inspired by modern design s
 - **⚡ Real-Time Streaming**: Live token-by-token streaming responses via Server-Sent Events (SSE).
 - **🧪 Practice Exam Generator**: Generate multiple-choice questions (MCQs), short-answer conceptual questions, and ethical dilemma scenarios.
 - **💡 100% Free to Run**:
-  - **Inference**: Uses Groq's free API (`qwen/qwen3.8-27b`).
+  - **Inference**: Uses Groq's high-throughput API (`openai/gpt-oss-120b` with seamless fallback).
   - **Embeddings**: Uses FastEmbed (`BAAI/bge-small-en-v1.5`) running locally on CPU via ONNX (no OpenAI key required, zero API costs).
 
 ---
@@ -27,7 +27,7 @@ Featuring an editorial paper-aesthetic web interface inspired by modern design s
 | **Backend API** | FastAPI, Uvicorn, Python-dotenv |
 | **Vector Database** | ChromaDB |
 | **Embeddings** | FastEmbed (`BAAI/bge-small-en-v1.5` via ONNX Runtime) |
-| **LLM Inference** | Groq (`qwen/qwen3.8-27b`) via `langchain-groq` |
+| **LLM Inference** | Groq (`openai/gpt-oss-120b`) via `langchain-groq` |
 | **Document Processing** | PyPDF, LangChain Text Splitters |
 
 ---

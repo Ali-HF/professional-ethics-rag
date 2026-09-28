@@ -249,16 +249,34 @@ This document tracks the chronological sequence of problems encountered, diagnos
 
 ---
 
+### Step 14: Groq 429 Rate Limit Resolution (`openai/gpt-oss-120b` + Automatic Fallback)
+- **User Incident**:
+  - `Error code: 429 - {'error': {'message': "Request too large for model qwen/qwen3.8-27b in organization ... on output tokens per minute (OTPM): Limit 1000, Requested 1087. The request's expected output tokens exceed the enforced limit; reduce max_tokens (or the request's expected output) and try again."}}`
+- **Root Cause Analysis**:
+  1. Groq's on-demand free tier imposes an aggressive **1,000 Output Tokens Per Minute (OTPM)** cap on `qwen/qwen3.8-27b`.
+  2. Because `max_tokens` was unset in `ChatGroq`, Groq automatically reserved the model's full default completion context (which exceeded 1,000 tokens) triggering an immediate 429 rate limit error.
+- **Architectural Solution**:
+  1. **Primary Model Upgrade to `openai/gpt-oss-120b`**:
+     - Upgraded primary inference model to `openai/gpt-oss-120b` (120 billion parameters, 8,000 token limit on Groq, no 1,000 OTPM bottleneck).
+     - Explicitly bounded output with `max_tokens=1500` to prevent token overrun.
+  2. **Automated Secondary Fallback**:
+     - Added try-catch streaming in `server.py` that automatically catches any primary model failure and seamlessly falls back to `openai/gpt-oss-20b` (`max_tokens=1000`).
+     - Ensures continuous student exam preparation without disruptive outages.
+  3. **Updated Model Badging**:
+     - Updated header badge in `static/index.html` to `GROQ · GPT-OSS 120B · CHROMADB`.
+
+---
+
 ## 📌 Summary of Core Decisions
 
 | Decision | Selected Choice | Rejected Alternative | Primary Reason |
 |---|---|---|---|
+| **Inference LLM** | Groq (`openai/gpt-oss-120b` + fallback) | `qwen/qwen3.8-27b` (unbounded) | Eliminates 1,000 OTPM rate limit 429 errors while providing 120B parameter reasoning depth. |
 | **Color Palette** | Cream White + White Beige + Architectural Black | Saturated Forest Green / Neon Emerald | Maximum legibility, serene reading comfort, zero eye fatigue. |
 | **Theme System** | Dual Theme (Cream White Light + Matte Obsidian Dark) | Single-theme | Effortless day and night exam studying with `localStorage` persistence. |
 | **Layout Shell** | Claude-style (Left Modules Sidebar + Central Chat) | Dashboard Cards / Modals | Best user flow for sequential learning and deep reading. |
 | **Geometry** | Sharp Rectangular (`border-radius: 0px`) | Rounded "Vibecoded" Pills | Elegant, architectural, academic precision without generic AI bubbly curves. |
 | **Embedding Engine** | FastEmbed (`bge-small-en-v1.5`) | OpenAI Embeddings | Zero cost, runs 100% locally on CPU, no paid API key required. |
-| **Inference LLM** | Groq (`qwen/qwen3.8-27b`) | OpenAI `gpt-4o-mini` | Blazing fast inference (~2s response), free API access, available on user's key. |
 | **Backend Framework** | FastAPI + Uvicorn | Pure Gradio | Full control over custom editorial HTML/CSS design, SSE token streaming, and API key management. |
 | **Student UX** | `start.bat` & Web Key Modal | Manual terminal commands | Enables non-technical classmates to run the RAG system by double-clicking a single file. |
 
