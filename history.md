@@ -229,15 +229,34 @@ This document tracks the chronological sequence of problems encountered, diagnos
 
 ---
 
+### Step 13: Cream White, White Beige, and Architectural Black (Low Eye-Fatigue Palette)
+- **User Request**: *"its still too much heavy opn the eyes, lets change themes too cream whitew, white beighe and black"*
+- **Motivation & Root Cause**:
+  - The previous forest green hues (`#163326`) and saturated green dark mode elements created visual heaviness and eye strain during sustained reading.
+  - The user sought a calmer, Scandinavian/editorial neutral palette centered strictly around **Cream White**, **White Beige**, and **Architectural Black**.
+- **Implementation & Palette Evolution**:
+  1. **Light Mode**:
+     - **Canvas / Paper**: Calming Cream White (`#fcfbf9`) with an ultra-subtle, airy neutral millimeter grid (`rgba(0, 0, 0, 0.032)`).
+     - **Sidebar & Secondary Surfaces**: Soft White Beige / Linen (`#f5f2eb` / `#eae4d9`).
+     - **Cards & Inputs**: Pure crisp White (`#ffffff`) with hairline neutral borders (`rgba(0, 0, 0, 0.08)`).
+     - **Primary Action & Typography**: Deep Architectural Black (`#18181b`) for buttons (`.new-chat-btn`, `.editorial-send-btn`), user speech bubbles, and headers.
+     - **Accent Highlights**: Refined, muted Sand Gold (`#a38242`) for week badges and citation pills.
+  2. **Dark Mode (`[data-theme="dark"]`)**:
+     - Soft matte obsidian charcoal (`#121212`), eliminating harsh saturated greens.
+     - Gentle cream white text (`#f4f4f5`) and muted warm-beige gold accents (`#d5be8a`).
+  3. **Zero-Radius Retained**:
+     - Enforced `border-radius: 0px !important;` globally.
+
+---
+
 ## 📌 Summary of Core Decisions
 
 | Decision | Selected Choice | Rejected Alternative | Primary Reason |
 |---|---|---|---|
-| **Theme System** | Dual Theme (Warm Cream Light + Forest Obsidian Dark) | Light-only or Pure Black Dark | Provides comfortable late-night exam cramming while maintaining signature color identity. |
-|---|---|---|---|
+| **Color Palette** | Cream White + White Beige + Architectural Black | Saturated Forest Green / Neon Emerald | Maximum legibility, serene reading comfort, zero eye fatigue. |
+| **Theme System** | Dual Theme (Cream White Light + Matte Obsidian Dark) | Single-theme | Effortless day and night exam studying with `localStorage` persistence. |
 | **Layout Shell** | Claude-style (Left Modules Sidebar + Central Chat) | Dashboard Cards / Modals | Best user flow for sequential learning and deep reading. |
 | **Geometry** | Sharp Rectangular (`border-radius: 0px`) | Rounded "Vibecoded" Pills | Elegant, architectural, academic precision without generic AI bubbly curves. |
-| **Color Scheme** | Warm Cream Grid + Forest Green + Sand Gold | Dark Obsidian / Monochrome | High legibility, paper aesthetic, university lecture notes feel. |
 | **Embedding Engine** | FastEmbed (`bge-small-en-v1.5`) | OpenAI Embeddings | Zero cost, runs 100% locally on CPU, no paid API key required. |
 | **Inference LLM** | Groq (`qwen/qwen3.8-27b`) | OpenAI `gpt-4o-mini` | Blazing fast inference (~2s response), free API access, available on user's key. |
 | **Backend Framework** | FastAPI + Uvicorn | Pure Gradio | Full control over custom editorial HTML/CSS design, SSE token streaming, and API key management. |
