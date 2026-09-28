@@ -30,12 +30,43 @@ const modalCloseBtn = document.getElementById('modalCloseBtn');
 const modalCancelBtn = document.getElementById('modalCancelBtn');
 const modalKeyMsg = document.getElementById('modalKeyMsg');
 
+// Theme Toggle Elements
+const themeToggleBtn = document.getElementById('themeToggleBtn');
+const themeToggleIcon = document.getElementById('themeToggleIcon');
+const themeToggleText = document.getElementById('themeToggleText');
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
   fetchModules();
   setupEventListeners();
   checkApiStatus();
 });
+
+// Theme Management (Light / Dark)
+function initTheme() {
+  const savedTheme = localStorage.getItem('ethica-theme') || 'light';
+  applyTheme(savedTheme);
+}
+
+function applyTheme(theme) {
+  if (theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    if (themeToggleIcon) themeToggleIcon.textContent = '☀️';
+    if (themeToggleText) themeToggleText.textContent = 'LIGHT';
+    localStorage.setItem('ethica-theme', 'dark');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    if (themeToggleIcon) themeToggleIcon.textContent = '🌙';
+    if (themeToggleText) themeToggleText.textContent = 'DARK';
+    localStorage.setItem('ethica-theme', 'light');
+  }
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+}
 
 // Fetch Modules
 async function fetchModules() {
@@ -103,6 +134,11 @@ function selectModuleAndAction(id, action) {
 
 // Event Listeners
 function setupEventListeners() {
+  // Theme Toggle (Light / Dark)
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', toggleTheme);
+  }
+
   // Sidebar Toggle (Desktop)
   sidebarToggleBtn.addEventListener('click', () => {
     sidebar.classList.toggle('collapsed');

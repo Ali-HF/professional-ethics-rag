@@ -214,9 +214,26 @@ This document tracks the chronological sequence of problems encountered, diagnos
 
 ---
 
+### Step 12: Forest Obsidian Noir Dark Theme & Theme Toggle
+- **User Request**: *"give a tdark theme too"*
+- **Implementation & Architectural Decisions**:
+  1. **Dual-Theme Token System**:
+     - Light Mode: Warm Cream (`#faf8f5`), Deep Forest Green (`#163326`), Sand Gold (`#c89b3c`).
+     - Dark Mode (`[data-theme="dark"]`): Deep Forest Obsidian (`#0d1410`), Emerald Green (`#34d399` / `#22c55e`), Bright Gold (`#e5b960`), and subtle white-grid lines.
+  2. **Zero-Radius Brutalist Consistency**:
+     - Dark theme strictly retains `border-radius: 0px !important;` across all components (sidebar, chat cards, input dock, buttons, and modals).
+  3. **Theme Switcher UI**:
+     - Added `#themeToggleBtn` in the top right header navigation bar next to the model badge.
+     - Displays `🌙 DARK` in light mode and `☀️ LIGHT` in dark mode.
+     - Automatically persists the student's theme preference in browser `localStorage` (`ethica-theme`).
+
+---
+
 ## 📌 Summary of Core Decisions
 
 | Decision | Selected Choice | Rejected Alternative | Primary Reason |
+|---|---|---|---|
+| **Theme System** | Dual Theme (Warm Cream Light + Forest Obsidian Dark) | Light-only or Pure Black Dark | Provides comfortable late-night exam cramming while maintaining signature color identity. |
 |---|---|---|---|
 | **Layout Shell** | Claude-style (Left Modules Sidebar + Central Chat) | Dashboard Cards / Modals | Best user flow for sequential learning and deep reading. |
 | **Geometry** | Sharp Rectangular (`border-radius: 0px`) | Rounded "Vibecoded" Pills | Elegant, architectural, academic precision without generic AI bubbly curves. |
